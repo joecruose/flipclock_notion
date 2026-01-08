@@ -2,80 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Notion Flip Clock V2</title>
+  <title>Responsive Notion Clock</title>
   <style>
-    /* 1. RESET & LAYOUT */
+    /* 1. LAYOUT RESET */
     body {
       margin: 0;
       padding: 0;
+      height: 100vh;
+      width: 100vw;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background-color: transparent; 
+      background-color: transparent;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      overflow: hidden; /* Prevents scrollbars */
     }
 
-    /* 2. MAIN CONTAINER */
+    /* 2. RESPONSIVE CONTAINER 
+       'vmin' means it calculates size based on the smaller dimension 
+       (width or height) of your Notion block. 
+    */
     .clock-container {
       display: flex;
-      gap: 10px; /* Gap between the two cards */
+      /* The gap shrinks/grows with the window */
+      gap: 3vmin; 
     }
 
-    /* 3. THE CARDS (The black plastic parts) */
+    /* 3. THE CARDS */
     .card {
       position: relative;
-      width: 150px;   /* Slightly wider to prevent bleeding */
-      height: 210px;  /* Taller to fit the text */
-      border-radius: 12px;
+      /* Height is 85% of the viewport's smallest side */
+      height: 85vmin; 
+      /* Aspect ratio keeps the card rectangle shape correct automatically */
+      aspect-ratio: 0.75 / 1; 
       
-      /* This gradient creates the "3D Plastic" look: Lighter top, Darker bottom */
-      background: linear-gradient(to bottom, #1a1a1a 50%, #000000 50%);
-      
+      background: linear-gradient(to bottom, #262626 50%, #000000 50%);
+      border-radius: 6vmin; /* Rounded corners scale with size */
       color: #eeeeee;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-      overflow: hidden; /* CUTS OFF any text that tries to go outside */
+      box-shadow: 0 2vmin 4vmin rgba(0,0,0,0.4);
+      overflow: hidden;
     }
 
     /* 4. THE NUMBERS */
     .number {
-      font-size: 6.5rem; /* Adjusted size to fit perfectly */
+      /* Font size scales with the viewport */
+      font-size: 60vmin; 
       font-weight: 800;
       line-height: 1;
-      letter-spacing: -3px; /* Squeezes numbers slightly closer */
+      letter-spacing: -1vmin;
       z-index: 1;
-      font-variant-numeric: tabular-nums; /* Keeps numbers the same width so they don't jump */
+      font-variant-numeric: tabular-nums;
     }
 
-    /* 5. THE SPLIT LINE (The mechanical cut) */
+    /* 5. THE SPLIT LINE */
     .card::after {
       content: "";
       position: absolute;
       top: 50%;
       left: 0;
       width: 100%;
-      height: 3px; /* Thickness of the cut */
-      background-color: rgba(0,0,0,0.6); /* Dark line */
+      height: 1vmin; /* Line thickness scales */
+      background-color: rgba(0,0,0,0.5);
       z-index: 5;
     }
 
     /* 6. LABELS (AM/PM & DAY) */
     .label {
       position: absolute;
-      bottom: 15px;
-      font-size: 0.85rem;
+      bottom: 6%;
+      font-size: 5vmin; /* Label text scales */
       font-weight: 700;
       color: #888888;
       text-transform: uppercase;
       z-index: 6;
-      font-family: sans-serif;
     }
 
-    .label.left { left: 18px; }
-    .label.right { right: 18px; }
+    .label.left { left: 10%; }
+    .label.right { right: 10%; }
 
   </style>
 </head>
@@ -96,30 +102,26 @@
   <script>
     function updateClock() {
       const now = new Date();
-
       let hours = now.getHours();
       let minutes = now.getMinutes();
       const dayIndex = now.getDay();
-
-      // AM/PM Logic
+      
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12;
       hours = hours ? hours : 12; 
-
-      // Formatting: Add leading zero if needed
+      
       const strHours = hours < 10 ? '0' + hours : hours;
       const strMinutes = minutes < 10 ? '0' + minutes : minutes;
-
-      const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+      
+      const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
       const strDay = days[dayIndex];
 
-      // Update the Text
       document.getElementById('hour').textContent = strHours;
       document.getElementById('minute').textContent = strMinutes;
       document.getElementById('ampm').textContent = ampm;
       document.getElementById('day').textContent = strDay;
     }
-
+    
     setInterval(updateClock, 1000);
     updateClock();
   </script>
