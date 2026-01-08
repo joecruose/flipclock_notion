@@ -2,104 +2,117 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Responsive Notion Clock</title>
+  <title>Notion Safe Flip Clock</title>
   <style>
-    /* 1. LAYOUT RESET */
-    body {
+    /* 1. FORCE NO SCROLLBARS */
+    html, body {
       margin: 0;
       padding: 0;
-      height: 100vh;
-      width: 100vw;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* Critical: Stops the window from trying to scroll */
+      background-color: transparent;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    /* 2. CENTER THE STAGE */
+    body {
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: transparent;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      overflow: hidden; /* Prevents scrollbars */
     }
 
-    /* 2. RESPONSIVE CONTAINER 
-       'vmin' means it calculates size based on the smaller dimension 
-       (width or height) of your Notion block. 
+    /* 3. THE SCALABLE WRAPPER 
+       We use a fixed reference size. The JS will shrink this entire box.
+       Reference Size: 340px wide, 240px tall.
     */
+    #scaler {
+      width: 340px;
+      height: 240px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* Ensure scaling happens from the exact center */
+      transform-origin: center center; 
+    }
+
+    /* 4. CLOCK CONTAINER */
     .clock-container {
       display: flex;
-      /* The gap shrinks/grows with the window */
-      gap: 3vmin; 
+      gap: 15px;
     }
 
-    /* 3. THE CARDS */
+    /* 5. CARDS (Sized to hold the numbers comfortably) */
     .card {
       position: relative;
-      /* Height is 85% of the viewport's smallest side */
-      height: 85vmin; 
-      /* Aspect ratio keeps the card rectangle shape correct automatically */
-      aspect-ratio: 0.75 / 1; 
-      
+      width: 140px; 
+      height: 200px; /* Taller height to prevent font cropping */
       background: linear-gradient(to bottom, #262626 50%, #000000 50%);
-      border-radius: 6vmin; /* Rounded corners scale with size */
+      border-radius: 12px;
       color: #eeeeee;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 2vmin 4vmin rgba(0,0,0,0.4);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
       overflow: hidden;
     }
 
-    /* 4. THE NUMBERS */
+    /* 6. NUMBERS (Reduced size to stop internal bleeding) */
     .number {
-      /* Font size scales with the viewport */
-      font-size: 60vmin; 
+      font-size: 125px; /* Reduced from 140px for safety */
       font-weight: 800;
       line-height: 1;
-      letter-spacing: -1vmin;
+      letter-spacing: -4px;
       z-index: 1;
       font-variant-numeric: tabular-nums;
+      /* Slight padding to ensure true vertical centering visually */
+      padding-top: 8px; 
     }
 
-    /* 5. THE SPLIT LINE */
+    /* 7. SPLIT LINE */
     .card::after {
       content: "";
       position: absolute;
       top: 50%;
       left: 0;
       width: 100%;
-      height: 1vmin; /* Line thickness scales */
+      height: 2px;
       background-color: rgba(0,0,0,0.5);
       z-index: 5;
     }
 
-    /* 6. LABELS (AM/PM & DAY) */
+    /* 8. LABELS */
     .label {
       position: absolute;
-      bottom: 6%;
-      font-size: 5vmin; /* Label text scales */
+      bottom: 12px;
+      font-size: 14px;
       font-weight: 700;
       color: #888888;
       text-transform: uppercase;
       z-index: 6;
     }
-
-    .label.left { left: 10%; }
-    .label.right { right: 10%; }
+    .label.left { left: 16px; }
+    .label.right { right: 16px; }
 
   </style>
 </head>
 <body>
 
-  <div class="clock-container">
-    <div class="card">
-      <div class="number" id="hour">00</div>
-      <div class="label left" id="ampm">AM</div>
-    </div>
-
-    <div class="card">
-      <div class="number" id="minute">00</div>
-      <div class="label right" id="day">SUN</div>
+  <div id="scaler">
+    <div class="clock-container">
+      <div class="card">
+        <div class="number" id="hour">00</div>
+        <div class="label left" id="ampm">AM</div>
+      </div>
+      <div class="card">
+        <div class="number" id="minute">00</div>
+        <div class="label right" id="day">SUN</div>
+      </div>
     </div>
   </div>
 
   <script>
+    /* CLOCK LOGIC */
     function updateClock() {
       const now = new Date();
       let hours = now.getHours();
@@ -114,16 +127,42 @@
       const strMinutes = minutes < 10 ? '0' + minutes : minutes;
       
       const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-      const strDay = days[dayIndex];
-
+      
       document.getElementById('hour').textContent = strHours;
       document.getElementById('minute').textContent = strMinutes;
       document.getElementById('ampm').textContent = ampm;
-      document.getElementById('day').textContent = strDay;
+      document.getElementById('day').textContent = days[dayIndex];
     }
-    
+
+    /* RESIZE LOGIC */
+    function resizeClock() {
+      const scaler = document.getElementById('scaler');
+      
+      // The Reference Size defined in CSS (#scaler)
+      const baseWidth = 340; 
+      const baseHeight = 240;
+      
+      // Get the Notion block size
+      const availableWidth = window.innerWidth;
+      const availableHeight = window.innerHeight;
+      
+      // Calculate ratios
+      const scaleX = availableWidth / baseWidth;
+      const scaleY = availableHeight / baseHeight;
+      
+      // Use the smaller ratio to fit BOTH width and height
+      // Multiplied by 0.85 to add a 15% safety buffer around the edges
+      const scale = Math.min(scaleX, scaleY) * 0.85; 
+      
+      scaler.style.transform = `scale(${scale})`;
+    }
+
+    // Start everything
     setInterval(updateClock, 1000);
     updateClock();
+
+    window.addEventListener('resize', resizeClock);
+    resizeClock();
   </script>
 
 </body>
