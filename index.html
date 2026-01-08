@@ -2,51 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Notion Safe Flip Clock</title>
+  <title>Notion Guaranteed Fit Clock</title>
   <style>
-    /* 1. FORCE NO SCROLLBARS */
+    /* 1. LAYOUT RESET */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; /* Critical: Stops the window from trying to scroll */
+      overflow: hidden; 
       background-color: transparent;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     }
 
-    /* 2. CENTER THE STAGE */
     body {
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    /* 3. THE SCALABLE WRAPPER 
-       We use a fixed reference size. The JS will shrink this entire box.
-       Reference Size: 340px wide, 240px tall.
-    */
+    /* 2. SCALABLE WRAPPER (340x240 Reference) */
     #scaler {
       width: 340px;
       height: 240px;
       display: flex;
       justify-content: center;
       align-items: center;
-      /* Ensure scaling happens from the exact center */
       transform-origin: center center; 
     }
 
-    /* 4. CLOCK CONTAINER */
     .clock-container {
       display: flex;
       gap: 15px;
     }
 
-    /* 5. CARDS (Sized to hold the numbers comfortably) */
+    /* 3. CARDS */
     .card {
       position: relative;
       width: 140px; 
-      height: 200px; /* Taller height to prevent font cropping */
+      height: 200px; 
       background: linear-gradient(to bottom, #262626 50%, #000000 50%);
       border-radius: 12px;
       color: #eeeeee;
@@ -57,19 +51,21 @@
       overflow: hidden;
     }
 
-    /* 6. NUMBERS (Reduced size to stop internal bleeding) */
+    /* 4. NUMBERS (Drastically reduced size to 100px to guarantee fit) */
     .number {
-      font-size: 125px; /* Reduced from 140px for safety */
+      font-size: 100px; 
       font-weight: 800;
-      line-height: 1;
-      letter-spacing: -4px;
       z-index: 1;
       font-variant-numeric: tabular-nums;
-      /* Slight padding to ensure true vertical centering visually */
-      padding-top: 8px; 
+      
+      /* New centering fix */
+      line-height: normal; 
+      display: flex;
+      align-items: center;
+      padding-top: 10px; /* Nudges the number down slightly */
     }
 
-    /* 7. SPLIT LINE */
+    /* 5. SPLIT LINE */
     .card::after {
       content: "";
       position: absolute;
@@ -81,7 +77,7 @@
       z-index: 5;
     }
 
-    /* 8. LABELS */
+    /* 6. LABELS */
     .label {
       position: absolute;
       bottom: 12px;
@@ -137,27 +133,20 @@
     /* RESIZE LOGIC */
     function resizeClock() {
       const scaler = document.getElementById('scaler');
-      
-      // The Reference Size defined in CSS (#scaler)
       const baseWidth = 340; 
       const baseHeight = 240;
-      
-      // Get the Notion block size
       const availableWidth = window.innerWidth;
       const availableHeight = window.innerHeight;
       
-      // Calculate ratios
       const scaleX = availableWidth / baseWidth;
       const scaleY = availableHeight / baseHeight;
       
-      // Use the smaller ratio to fit BOTH width and height
-      // Multiplied by 0.85 to add a 15% safety buffer around the edges
+      // Kept the safety buffer at 0.85
       const scale = Math.min(scaleX, scaleY) * 0.85; 
       
       scaler.style.transform = `scale(${scale})`;
     }
 
-    // Start everything
     setInterval(updateClock, 1000);
     updateClock();
 
