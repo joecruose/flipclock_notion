@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Notion Final Hybrid Clock</title>
+  <title>Notion Tight Maximized Clock</title>
   <style>
     /* 1. LAYOUT RESET */
     html, body {
@@ -12,7 +12,6 @@
       height: 100%;
       overflow: hidden; 
       background-color: transparent;
-      /* REVERTED: Back to the original Helvetica/Arial font you liked */
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     }
 
@@ -22,10 +21,15 @@
       align-items: center;
     }
 
-    /* 2. TIGHT WRAPPER */
+    /* 2. SUPER TIGHT WRAPPER 
+       Calculation:
+       Card Width (142px) * 2 + Gap (6px) = 290px Total Width
+       Card Height (200px) = 200px Total Height
+       We set the scaler to this EXACT size so there is no wasted margin.
+    */
     #scaler {
-      width: 300px;
-      height: 210px;
+      width: 290px;
+      height: 200px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -34,15 +38,16 @@
 
     .clock-container {
       display: flex;
-      gap: 15px;
+      /* CHANGE: Reduced gap significantly (was 15px) */
+      gap: 6px; 
     }
 
     /* 3. CARDS */
     .card {
       position: relative;
-      width: 140px; 
+      /* CHANGE: Slightly wider to fill space */
+      width: 142px; 
       height: 200px; 
-      /* Clean gradient (Darker/Cleaner) */
       background: linear-gradient(to bottom, #2a2a2a 50%, #111111 50%);
       border-radius: 12px;
       color: #ffffff;
@@ -50,18 +55,14 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      
-      /* NO SHADOWS (Kept this fix to prevent cropping) */
       box-shadow: none; 
     }
 
-    /* 4. NUMBERS (Restored Original Style) */
+    /* 4. NUMBERS */
     .number {
       font-size: 100px; 
-      /* REVERTED: Back to Extra Bold (800) */
       font-weight: 800; 
       line-height: 1;
-      /* REVERTED: Back to tighter spacing (-4px) */
       letter-spacing: -4px; 
       z-index: 1;
       font-variant-numeric: tabular-nums;
@@ -83,7 +84,7 @@
     /* 6. LABELS */
     .label {
       position: absolute;
-      bottom: 12px;
+      bottom: 10px; /* Moved down slightly to fit tight design */
       font-size: 13px;
       font-weight: 700;
       color: #999999;
@@ -91,8 +92,8 @@
       z-index: 6;
       letter-spacing: 0.5px;
     }
-    .label.left { left: 16px; }
-    .label.right { right: 16px; }
+    .label.left { left: 14px; }
+    .label.right { right: 14px; }
 
   </style>
 </head>
@@ -137,15 +138,20 @@
     /* RESIZE LOGIC */
     function resizeClock() {
       const scaler = document.getElementById('scaler');
-      const baseWidth = 300; 
-      const baseHeight = 210;
+      
+      // Matched to the new tighter CSS dimensions
+      const baseWidth = 290; 
+      const baseHeight = 200;
+      
       const availableWidth = window.innerWidth;
       const availableHeight = window.innerHeight;
       
       const scaleX = availableWidth / baseWidth;
       const scaleY = availableHeight / baseHeight;
       
-      const scale = Math.min(scaleX, scaleY) * 0.96; 
+      // CHANGE: Increased to 0.98. 
+      // This leaves only 1% margin on each side (barely visible).
+      const scale = Math.min(scaleX, scaleY) * 0.98; 
       
       scaler.style.transform = `scale(${scale})`;
     }
