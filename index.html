@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Notion Tall Flip Clock</title>
+  <title>Notion Tall Elongated Clock</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
 
   <style>
-    /* 2. LAYOUT RESET */
+    /* 1. LAYOUT RESET */
     html, body {
       margin: 0;
       padding: 0;
@@ -17,7 +17,7 @@
       height: 100%;
       overflow: hidden; 
       background-color: transparent;
-      font-family: 'Oswald', sans-serif; /* Global Font Change */
+      font-family: 'Oswald', sans-serif; 
     }
 
     body {
@@ -26,13 +26,14 @@
       align-items: center;
     }
 
-    /* 3. TIGHT WRAPPER 
-       Total Width = 290px
-       Total Height = 200px
+    /* 2. ELONGATED WRAPPER 
+       New Calculation:
+       Card Width (130px) * 2 + Gap (8px) = 268px Total Width
+       Card Height (260px) = 260px Total Height
     */
     #scaler {
-      width: 290px;
-      height: 200px;
+      width: 268px;
+      height: 260px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -41,14 +42,15 @@
 
     .clock-container {
       display: flex;
-      gap: 6px; /* Tight gap */
+      gap: 8px; 
     }
 
-    /* 4. CARDS */
+    /* 3. TALL CARDS */
     .card {
       position: relative;
-      width: 142px; 
-      height: 200px; 
+      /* CHANGE: Much narrower and taller */
+      width: 130px; 
+      height: 260px; 
       background: linear-gradient(to bottom, #2a2a2a 50%, #111111 50%);
       border-radius: 12px;
       color: #ffffff;
@@ -58,24 +60,21 @@
       overflow: hidden;
     }
 
-    /* 5. NUMBERS (The "Tall" Look) */
+    /* 4. NUMBERS */
     .number {
-      font-family: 'Oswald', sans-serif; /* The tall font */
-      font-size: 115px; /* Much bigger because the font is narrow */
+      font-family: 'Oswald', sans-serif; 
+      font-size: 210px; /* Massive size for tall card */
       font-weight: 700; 
       line-height: 1;
-      letter-spacing: 0px; /* No spacing needed for condensed fonts */
+      letter-spacing: 0px; 
       z-index: 1;
       font-variant-numeric: tabular-nums;
       
-      /* Vertical Stretch Trick: 
-         This makes the font look even TALLER like the image */
-      transform: scaleY(1.1); 
-      
-      padding-top: 12px; /* Center alignment adjustment */
+      /* KEY FIX: Stretch vertically AND move up slightly to center on the line */
+      transform: scaleY(1.1) translateY(-1%); 
     }
 
-    /* 6. SPLIT LINE */
+    /* 5. SPLIT LINE */
     .card::after {
       content: "";
       position: absolute;
@@ -87,20 +86,20 @@
       z-index: 5;
     }
 
-    /* 7. LABELS */
+    /* 6. LABELS */
     .label {
       position: absolute;
-      bottom: 10px;
-      font-family: 'Helvetica Neue', sans-serif; /* Keep labels readable */
-      font-size: 13px;
+      bottom: 12px;
+      font-family: 'Helvetica Neue', sans-serif; 
+      font-size: 14px;
       font-weight: 700;
       color: #999999;
       text-transform: uppercase;
       z-index: 6;
       letter-spacing: 0.5px;
     }
-    .label.left { left: 14px; }
-    .label.right { right: 14px; }
+    .label.left { left: 16px; }
+    .label.right { right: 16px; }
 
   </style>
 </head>
@@ -145,15 +144,18 @@
     /* RESIZE LOGIC */
     function resizeClock() {
       const scaler = document.getElementById('scaler');
-      const baseWidth = 290; 
-      const baseHeight = 200;
+      
+      // Update Scale Base to match new CSS dimensions
+      const baseWidth = 268; 
+      const baseHeight = 260;
+      
       const availableWidth = window.innerWidth;
       const availableHeight = window.innerHeight;
       
       const scaleX = availableWidth / baseWidth;
       const scaleY = availableHeight / baseHeight;
       
-      // Tight Fit (98% fill)
+      // 98% Fit
       const scale = Math.min(scaleX, scaleY) * 0.98; 
       
       scaler.style.transform = `scale(${scale})`;
@@ -168,4 +170,3 @@
 
 </body>
 </html>
-
