@@ -2,45 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Notion Hybrid Clock</title>
+  <title>Notion Safe Flip Clock</title>
   <style>
-    /* 1. LAYOUT RESET */
+    /* 1. FORCE NO SCROLLBARS */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; 
+      overflow: hidden; /* Critical: Stops the window from trying to scroll */
       background-color: transparent;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     }
 
+    /* 2. CENTER THE STAGE */
     body {
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    /* 2. WRAPPER (Using V5 dimensions) */
+    /* 3. THE SCALABLE WRAPPER 
+       We use a fixed reference size. The JS will shrink this entire box.
+       Reference Size: 340px wide, 240px tall.
+    */
     #scaler {
       width: 340px;
       height: 240px;
       display: flex;
       justify-content: center;
       align-items: center;
+      /* Ensure scaling happens from the exact center */
       transform-origin: center center; 
     }
 
+    /* 4. CLOCK CONTAINER */
     .clock-container {
       display: flex;
-      gap: 15px; /* V5 Spacing */
+      gap: 15px;
     }
 
-    /* 3. CARDS (V5 Dimensions) */
+    /* 5. CARDS (Sized to hold the numbers comfortably) */
     .card {
       position: relative;
       width: 140px; 
-      height: 200px; 
+      height: 200px; /* Taller height to prevent font cropping */
       background: linear-gradient(to bottom, #262626 50%, #000000 50%);
       border-radius: 12px;
       color: #eeeeee;
@@ -51,22 +57,19 @@
       overflow: hidden;
     }
 
-    /* 4. NUMBERS (Hybrid Adjustment) 
-       - V5 was 125px (Too big, clipped)
-       - V6 was 100px (Good fit)
-       - We use 105px here to keep it safe but impactful.
-    */
+    /* 6. NUMBERS (Reduced size to stop internal bleeding) */
     .number {
-      font-size: 105px; 
+      font-size: 100px; /* Reduced from 140px for safety */
       font-weight: 800;
-      line-height: 1; /* Restored V5 line-height */
+      line-height: 1;
       letter-spacing: -4px;
       z-index: 1;
       font-variant-numeric: tabular-nums;
-      padding-top: 8px; /* Restored V5 positioning */
+      /* Slight padding to ensure true vertical centering visually */
+      padding-top: 8px; 
     }
 
-    /* 5. SPLIT LINE */
+    /* 7. SPLIT LINE */
     .card::after {
       content: "";
       position: absolute;
@@ -78,7 +81,7 @@
       z-index: 5;
     }
 
-    /* 6. LABELS */
+    /* 8. LABELS */
     .label {
       position: absolute;
       bottom: 12px;
@@ -131,23 +134,30 @@
       document.getElementById('day').textContent = days[dayIndex];
     }
 
-    /* RESIZE LOGIC (Kept the V5/V6 logic that works) */
+    /* RESIZE LOGIC */
     function resizeClock() {
       const scaler = document.getElementById('scaler');
+      
+      // The Reference Size defined in CSS (#scaler)
       const baseWidth = 340; 
       const baseHeight = 240;
+      
+      // Get the Notion block size
       const availableWidth = window.innerWidth;
       const availableHeight = window.innerHeight;
       
+      // Calculate ratios
       const scaleX = availableWidth / baseWidth;
       const scaleY = availableHeight / baseHeight;
       
-      // Safety buffer of 0.85
+      // Use the smaller ratio to fit BOTH width and height
+      // Multiplied by 0.85 to add a 15% safety buffer around the edges
       const scale = Math.min(scaleX, scaleY) * 0.85; 
       
       scaler.style.transform = `scale(${scale})`;
     }
 
+    // Start everything
     setInterval(updateClock, 1000);
     updateClock();
 
