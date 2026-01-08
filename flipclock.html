@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notion Flip Clock V2</title>
+  <style>
+    /* 1. RESET & LAYOUT */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: transparent; 
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    /* 2. MAIN CONTAINER */
+    .clock-container {
+      display: flex;
+      gap: 10px; /* Gap between the two cards */
+    }
+
+    /* 3. THE CARDS (The black plastic parts) */
+    .card {
+      position: relative;
+      width: 150px;   /* Slightly wider to prevent bleeding */
+      height: 210px;  /* Taller to fit the text */
+      border-radius: 12px;
+      
+      /* This gradient creates the "3D Plastic" look: Lighter top, Darker bottom */
+      background: linear-gradient(to bottom, #1a1a1a 50%, #000000 50%);
+      
+      color: #eeeeee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      overflow: hidden; /* CUTS OFF any text that tries to go outside */
+    }
+
+    /* 4. THE NUMBERS */
+    .number {
+      font-size: 6.5rem; /* Adjusted size to fit perfectly */
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -3px; /* Squeezes numbers slightly closer */
+      z-index: 1;
+      font-variant-numeric: tabular-nums; /* Keeps numbers the same width so they don't jump */
+    }
+
+    /* 5. THE SPLIT LINE (The mechanical cut) */
+    .card::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 3px; /* Thickness of the cut */
+      background-color: rgba(0,0,0,0.6); /* Dark line */
+      z-index: 5;
+    }
+
+    /* 6. LABELS (AM/PM & DAY) */
+    .label {
+      position: absolute;
+      bottom: 15px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #888888;
+      text-transform: uppercase;
+      z-index: 6;
+      font-family: sans-serif;
+    }
+
+    .label.left { left: 18px; }
+    .label.right { right: 18px; }
+
+  </style>
+</head>
+<body>
+
+  <div class="clock-container">
+    <div class="card">
+      <div class="number" id="hour">00</div>
+      <div class="label left" id="ampm">AM</div>
+    </div>
+
+    <div class="card">
+      <div class="number" id="minute">00</div>
+      <div class="label right" id="day">SUN</div>
+    </div>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      const dayIndex = now.getDay();
+
+      // AM/PM Logic
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; 
+
+      // Formatting: Add leading zero if needed
+      const strHours = hours < 10 ? '0' + hours : hours;
+      const strMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+      const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+      const strDay = days[dayIndex];
+
+      // Update the Text
+      document.getElementById('hour').textContent = strHours;
+      document.getElementById('minute').textContent = strMinutes;
+      document.getElementById('ampm').textContent = ampm;
+      document.getElementById('day').textContent = strDay;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+
+</body>
+</html>
