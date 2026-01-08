@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Notion Guaranteed Fit Clock</title>
+  <title>Notion Hybrid Clock</title>
   <style>
     /* 1. LAYOUT RESET */
     html, body {
@@ -21,7 +21,7 @@
       align-items: center;
     }
 
-    /* 2. SCALABLE WRAPPER (340x240 Reference) */
+    /* 2. WRAPPER (Using V5 dimensions) */
     #scaler {
       width: 340px;
       height: 240px;
@@ -33,10 +33,10 @@
 
     .clock-container {
       display: flex;
-      gap: 15px;
+      gap: 15px; /* V5 Spacing */
     }
 
-    /* 3. CARDS */
+    /* 3. CARDS (V5 Dimensions) */
     .card {
       position: relative;
       width: 140px; 
@@ -51,18 +51,19 @@
       overflow: hidden;
     }
 
-    /* 4. NUMBERS (Drastically reduced size to 100px to guarantee fit) */
+    /* 4. NUMBERS (Hybrid Adjustment) 
+       - V5 was 125px (Too big, clipped)
+       - V6 was 100px (Good fit)
+       - We use 105px here to keep it safe but impactful.
+    */
     .number {
-      font-size: 100px; 
+      font-size: 105px; 
       font-weight: 800;
+      line-height: 1; /* Restored V5 line-height */
+      letter-spacing: -4px;
       z-index: 1;
       font-variant-numeric: tabular-nums;
-      
-      /* New centering fix */
-      line-height: normal; 
-      display: flex;
-      align-items: center;
-      padding-top: 10px; /* Nudges the number down slightly */
+      padding-top: 8px; /* Restored V5 positioning */
     }
 
     /* 5. SPLIT LINE */
@@ -130,7 +131,7 @@
       document.getElementById('day').textContent = days[dayIndex];
     }
 
-    /* RESIZE LOGIC */
+    /* RESIZE LOGIC (Kept the V5/V6 logic that works) */
     function resizeClock() {
       const scaler = document.getElementById('scaler');
       const baseWidth = 340; 
@@ -141,7 +142,7 @@
       const scaleX = availableWidth / baseWidth;
       const scaleY = availableHeight / baseHeight;
       
-      // Kept the safety buffer at 0.85
+      // Safety buffer of 0.85
       const scale = Math.min(scaleX, scaleY) * 0.85; 
       
       scaler.style.transform = `scale(${scale})`;
