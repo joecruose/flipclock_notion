@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Notion Maximized Clock</title>
+  <title>Notion Clean iOS Clock</title>
   <style>
     /* 1. LAYOUT RESET */
     html, body {
@@ -12,7 +12,8 @@
       height: 100%;
       overflow: hidden; 
       background-color: transparent;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      /* CHANGE: Apple System Font Stack */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
@@ -21,10 +22,7 @@
       align-items: center;
     }
 
-    /* 2. TIGHTER SCALER WRAPPER 
-       Old size: 340px x 240px (Too much empty space)
-       New size: 300px x 210px (Hugs the clock tightly)
-    */
+    /* 2. TIGHT WRAPPER (Maximized Fit) */
     #scaler {
       width: 300px;
       height: 210px;
@@ -39,30 +37,35 @@
       gap: 15px;
     }
 
-    /* 3. CARDS (Unchanged) */
+    /* 3. CARDS */
     .card {
       position: relative;
       width: 140px; 
       height: 200px; 
-      background: linear-gradient(to bottom, #262626 50%, #000000 50%);
+      /* Subtler gradient for a premium "clean" look */
+      background: linear-gradient(to bottom, #2a2a2a 50%, #111111 50%);
       border-radius: 12px;
-      color: #eeeeee;
+      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
       overflow: hidden;
+      
+      /* CHANGE: Removed Box Shadow to fix cropping */
+      box-shadow: none; 
     }
 
-    /* 4. NUMBERS (Kept the size you liked) */
+    /* 4. NUMBERS (Apple Style) */
     .number {
       font-size: 100px; 
-      font-weight: 800;
+      /* CHANGE: Lighter weight (700 instead of 800) for cleaner look */
+      font-weight: 700; 
       line-height: 1;
-      letter-spacing: -4px;
+      /* CHANGE: Less aggressive letter spacing */
+      letter-spacing: -2px; 
       z-index: 1;
       font-variant-numeric: tabular-nums;
-      padding-top: 8px; 
+      padding-top: 5px; 
     }
 
     /* 5. SPLIT LINE */
@@ -72,8 +75,8 @@
       top: 50%;
       left: 0;
       width: 100%;
-      height: 2px;
-      background-color: rgba(0,0,0,0.5);
+      height: 1px; /* Thinner line for elegance */
+      background-color: rgba(0,0,0,0.8); /* Darker, cleaner line */
       z-index: 5;
     }
 
@@ -81,11 +84,12 @@
     .label {
       position: absolute;
       bottom: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      color: #888888;
+      font-size: 13px;
+      font-weight: 600; /* Medium weight */
+      color: #999999;
       text-transform: uppercase;
       z-index: 6;
+      letter-spacing: 0.5px;
     }
     .label.left { left: 16px; }
     .label.right { right: 16px; }
@@ -130,22 +134,17 @@
       document.getElementById('day').textContent = days[dayIndex];
     }
 
-    /* RESIZE LOGIC (MAXIMIZED) */
+    /* RESIZE LOGIC (Maximized) */
     function resizeClock() {
       const scaler = document.getElementById('scaler');
-      
-      // Matched to the new tighter CSS dimensions
       const baseWidth = 300; 
       const baseHeight = 210;
-      
       const availableWidth = window.innerWidth;
       const availableHeight = window.innerHeight;
       
       const scaleX = availableWidth / baseWidth;
       const scaleY = availableHeight / baseHeight;
       
-      // CHANGED: Increased from 0.85 to 0.96
-      // This fills 96% of the Notion block, leaving only tiny margins
       const scale = Math.min(scaleX, scaleY) * 0.96; 
       
       scaler.style.transform = `scale(${scale})`;
