@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Notion Tall Elongated Clock</title>
+  <title>Notion Tall Fixed Clock</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,10 +26,9 @@
       align-items: center;
     }
 
-    /* 2. ELONGATED WRAPPER 
-       New Calculation:
-       Card Width (130px) * 2 + Gap (8px) = 268px Total Width
-       Card Height (260px) = 260px Total Height
+    /* 2. WRAPPER 
+       Card Width (130px) * 2 + Gap (8px) = 268px
+       Card Height = 260px
     */
     #scaler {
       width: 268px;
@@ -45,10 +44,9 @@
       gap: 8px; 
     }
 
-    /* 3. TALL CARDS */
+    /* 3. CARDS */
     .card {
       position: relative;
-      /* CHANGE: Much narrower and taller */
       width: 130px; 
       height: 260px; 
       background: linear-gradient(to bottom, #2a2a2a 50%, #111111 50%);
@@ -60,18 +58,25 @@
       overflow: hidden;
     }
 
-    /* 4. NUMBERS */
+    /* 4. NUMBERS (The Fix) */
     .number {
       font-family: 'Oswald', sans-serif; 
-      font-size: 210px; /* Massive size for tall card */
+      
+      /* CHANGED: Reduced from 210px to 180px to stop cropping */
+      font-size: 180px; 
+      
       font-weight: 700; 
       line-height: 1;
       letter-spacing: 0px; 
       z-index: 1;
       font-variant-numeric: tabular-nums;
       
-      /* KEY FIX: Stretch vertically AND move up slightly to center on the line */
-      transform: scaleY(1.1) translateY(-1%); 
+      /* CHANGED: Increased stretch from 1.1 to 1.35 
+         This makes it look TALLER visually without increasing the physical pixel size */
+      transform: scaleY(1.35); 
+      
+      /* Minor adjustment to center it perfectly on the cut line */
+      padding-bottom: 10px; 
     }
 
     /* 5. SPLIT LINE */
@@ -89,7 +94,7 @@
     /* 6. LABELS */
     .label {
       position: absolute;
-      bottom: 12px;
+      bottom: 14px;
       font-family: 'Helvetica Neue', sans-serif; 
       font-size: 14px;
       font-weight: 700;
@@ -144,18 +149,14 @@
     /* RESIZE LOGIC */
     function resizeClock() {
       const scaler = document.getElementById('scaler');
-      
-      // Update Scale Base to match new CSS dimensions
       const baseWidth = 268; 
       const baseHeight = 260;
-      
       const availableWidth = window.innerWidth;
       const availableHeight = window.innerHeight;
       
       const scaleX = availableWidth / baseWidth;
       const scaleY = availableHeight / baseHeight;
       
-      // 98% Fit
       const scale = Math.min(scaleX, scaleY) * 0.98; 
       
       scaler.style.transform = `scale(${scale})`;
